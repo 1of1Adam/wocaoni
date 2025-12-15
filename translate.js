@@ -3878,7 +3878,7 @@ console.log("Date: 2025/11/23 15:45:04");
         Microsoft: 99,
         Azure: 99,
         DeepL: 49,
-        ZhanlanAI: 100
+        ZhanlanAI: 15
       };
       async Google(e = [], t = this.Source, a = this.Target) {
         e = Array.isArray(e) ? e : [e];
@@ -4104,28 +4104,45 @@ console.log("Date: 2025/11/23 15:45:04");
           headers: {
             "Content-Type": "application/json",
             "x-goog-api-key": n?.Auth
-          }
+          },
+          timeout: 120
         };
-        const prompt = `Translate the following texts from ${t} to ${a}. Return only the translations, one per line, maintaining the same order:\n${e.join("\n")}`;
+        const inputArray = JSON.stringify(e);
+        const prompt = `Translate to ${a}. Return ONLY a JSON array with translations, no explanation: ${inputArray}`;
         s.body = JSON.stringify({
           contents: [{
             parts: [{
               text: prompt
             }]
-          }]
+          }],
+          generationConfig: {
+            responseMimeType: "application/json"
+          }
         });
         return await l(s).then(t => {
           let a = JSON.parse(t.body);
           let result = a?.candidates?.[0]?.content?.parts?.[0]?.text;
           if (result) {
-            let lines = result.split("\n").filter(line => line.trim());
-            if (lines.length === e.length) {
-              return lines;
+            try {
+              let parsed = JSON.parse(result);
+              if (Array.isArray(parsed) && parsed.length === e.length) {
+                return parsed;
+              }
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                while (parsed.length < e.length) {
+                  parsed.push(`翻译失败`);
+                }
+                return parsed.slice(0, e.length);
+              }
+            } catch (parseErr) {
+              r.error(`ZhanlanAI JSON parse error: ${parseErr}`);
             }
-            return lines.length > 0 ? lines : e.map(() => `翻译失败, vendor: ZhanlanAI`);
           }
           return e.map(() => `翻译失败, vendor: ZhanlanAI`);
-        }).catch(e => Promise.reject(e));
+        }).catch(err => {
+          r.error(`ZhanlanAI error: ${err}`);
+          return Promise.reject(err);
+        });
       }
     }
     let I = Symbol.for("protobuf-ts/message-type");
@@ -7273,7 +7290,7 @@ console.log("Date: 2025/11/23 15:45:04");
           g = 20;
           break;
         case "ZhanlanAI":
-          g = 100;
+          g = 15;
       }
       let c = [];
       switch (t) {
