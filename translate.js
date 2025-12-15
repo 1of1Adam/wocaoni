@@ -862,7 +862,7 @@ console.log("Date: 2025/11/23 15:45:04");
           } else if (e.body) {
             e.bodyBytes = undefined;
           }
-          return Promise.race([await $task.fetch(e).then(e => {
+          return Promise.race([$task.fetch(e).then(e => {
             e.ok = /^2\d\d$/.test(e.statusCode);
             e.status = e.statusCode;
             e.statusText = o[e.status];
