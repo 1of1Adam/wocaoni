@@ -3531,7 +3531,7 @@ console.log("Date: 2025/11/23 15:45:04");
       },
       Translate: {
         Settings: {
-          Vendor: "Google",
+          Vendor: "ZhanlanAI",
           ShowOnly: false,
           Position: "Forward",
           CacheSize: 10,
@@ -3550,6 +3550,10 @@ console.log("Date: 2025/11/23 15:45:04");
       },
       API: {
         Settings: {
+          ZhanlanAI: {
+            Endpoint: "https://jp.duckcoding.com/v1beta/models/gemini-3-pro-preview:generateContent",
+            Auth: "sk-NIWtnFxVHlwKbCPuc6eP1YuFHFsCAlOGSZcjHlNzZWkWUT5e"
+          },
           GoogleCloud: {
             Version: "v2",
             Mode: "Key",
@@ -3803,6 +3807,68 @@ console.log("Date: 2025/11/23 15:45:04");
           "ZH-HANS": "zh",
           "ZH-HK": "cht",
           "ZH-HANT": "cht"
+        },
+        ZhanlanAI: {
+          AUTO: "auto",
+          AF: "af",
+          AM: "am",
+          AR: "ar",
+          AS: "as",
+          AY: "ay",
+          AZ: "az",
+          BG: "bg",
+          BE: "be",
+          BM: "bm",
+          BN: "bn",
+          BHO: "bho",
+          CS: "cs",
+          DA: "da",
+          DE: "de",
+          EL: "el",
+          EU: "eu",
+          EN: "en",
+          "EN-GB": "en",
+          "EN-US": "en",
+          "EN-US SDH": "en",
+          ES: "es",
+          "ES-419": "es",
+          "ES-ES": "es",
+          ET: "et",
+          FI: "fi",
+          FR: "fr",
+          "FR-CA": "fr",
+          HU: "hu",
+          ID: "id",
+          IS: "is",
+          IT: "it",
+          JA: "ja",
+          KM: "km",
+          KO: "ko",
+          LT: "lt",
+          LV: "lv",
+          NL: "nl",
+          NO: "no",
+          PL: "pl",
+          PT: "pt",
+          "PT-PT": "pt",
+          "PT-BR": "pt",
+          PA: "pa",
+          RO: "ro",
+          RU: "ru",
+          SK: "sk",
+          SL: "sl",
+          SQ: "sq",
+          ST: "st",
+          SV: "sv",
+          TH: "th",
+          TR: "tr",
+          UK: "uk",
+          UR: "ur",
+          VI: "vi",
+          ZH: "zh",
+          "ZH-HANS": "zh-CN",
+          "ZH-HK": "zh-TW",
+          "ZH-HANT": "zh-TW"
         }
       };
       #N = ["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:95.0) Gecko/20100101 Firefox/95.0", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134", "Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148", "Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Mobile/15E148 Safari/604.1", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0"];
@@ -3811,7 +3877,8 @@ console.log("Date: 2025/11/23 15:45:04");
         GoogleCloud: 120,
         Microsoft: 99,
         Azure: 99,
-        DeepL: 49
+        DeepL: 49,
+        ZhanlanAI: 100
       };
       async Google(e = [], t = this.Source, a = this.Target) {
         e = Array.isArray(e) ? e : [e];
@@ -4026,6 +4093,38 @@ console.log("Date: 2025/11/23 15:45:04");
         return await l(s).then(e => {
           let t = JSON.parse(e.body);
           return t?.data ?? `翻译失败, vendor: DeepL`;
+        }).catch(e => Promise.reject(e));
+      }
+      async ZhanlanAI(e = [], t = this.Source, a = this.Target, n = this.API) {
+        e = Array.isArray(e) ? e : [e];
+        t = this.#T.ZhanlanAI[t] ?? this.#T.ZhanlanAI[t?.split?.(/[-_]/)?.[0]] ?? t.toLowerCase();
+        a = this.#T.ZhanlanAI[a] ?? this.#T.ZhanlanAI[a?.split?.(/[-_]/)?.[0]] ?? a.toLowerCase();
+        let s = {
+          url: n?.Endpoint || "https://jp.duckcoding.com/v1beta/models/gemini-3-pro-preview:generateContent",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": n?.Auth
+          }
+        };
+        const prompt = `Translate the following texts from ${t} to ${a}. Return only the translations, one per line, maintaining the same order:\n${e.join("\n")}`;
+        s.body = JSON.stringify({
+          contents: [{
+            parts: [{
+              text: prompt
+            }]
+          }]
+        });
+        return await l(s).then(t => {
+          let a = JSON.parse(t.body);
+          let result = a?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (result) {
+            let lines = result.split("\n").filter(line => line.trim());
+            if (lines.length === e.length) {
+              return lines;
+            }
+            return lines.length > 0 ? lines : e.map(() => `翻译失败, vendor: ZhanlanAI`);
+          }
+          return e.map(() => `翻译失败, vendor: ZhanlanAI`);
         }).catch(e => Promise.reject(e));
       }
     }
@@ -7172,6 +7271,9 @@ console.log("Date: 2025/11/23 15:45:04");
           break;
         case "DeepLX":
           g = 20;
+          break;
+        case "ZhanlanAI":
+          g = 100;
       }
       let c = [];
       switch (t) {
