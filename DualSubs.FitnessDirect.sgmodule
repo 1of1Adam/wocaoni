@@ -1,0 +1,13 @@
+#!name = DualSubs Fitness+ Direct Translate
+#!desc = 直接翻译 Apple Fitness+ 字幕（不依赖 subtype 参数）
+#!author = Direct Translation Patch
+#!icon = https://github.com/DualSubs/Universal/raw/main/src/assets/icon_rounded.png
+
+# 直接拦截所有 webvtt 字幕请求并翻译，不需要 m3u8 预处理
+
+[Script]
+# 直接翻译 hls-svod.itunes.apple.com 的所有 webvtt 字幕
+DualSubs.Fitness.Direct.Translate = type=http-response, pattern=^https?:\/\/(hls|hls-svod)\.itunes\.apple\.com\/itunes-assets\/(.+)\/(.+)\.webvtt, requires-body=1, script-path=https://cdn.jsdelivr.net/gh/1of1Adam/wocaoni@main/translate.js, argument=Types="Official,Translate"&Languages[0]="AUTO"&Languages[1]="ZH"&Position="Forward"&Vendor="ZhanlanAI"&ShowOnly="false"&LogLevel="ALL", timeout=120
+
+[MITM]
+hostname = %APPEND% hls.itunes.apple.com, hls-svod.itunes.apple.com
