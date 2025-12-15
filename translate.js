@@ -3878,7 +3878,7 @@ console.log("Date: 2025/11/23 15:45:04");
         Microsoft: 99,
         Azure: 99,
         DeepL: 49,
-        ZhanlanAI: 15
+        ZhanlanAI: 1
       };
       async Google(e = [], t = this.Source, a = this.Target) {
         e = Array.isArray(e) ? e : [e];
