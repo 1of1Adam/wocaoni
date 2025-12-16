@@ -3878,7 +3878,7 @@ console.log("Date: 2025/11/23 15:45:04");
         Microsoft: 99,
         Azure: 99,
         DeepL: 49,
-        ZhanlanAI: 50
+        ZhanlanAI: 100
       };
       async Google(e = [], t = this.Source, a = this.Target) {
         e = Array.isArray(e) ? e : [e];
@@ -4108,7 +4108,19 @@ console.log("Date: 2025/11/23 15:45:04");
           timeout: 120
         };
         const inputArray = JSON.stringify(e);
-        const prompt = `Translate to ${a}. Return ONLY a JSON array with translations, no explanation: ${inputArray}`;
+        const prompt = `你是专业字幕翻译。将以下文本翻译成${a}。
+
+翻译原则：
+1. 语义精确但表达自然，像人说的话。按中文语序重组，不逐词替换。保留语气情绪。口头填充词可适当压缩。
+2. 结合上下文消歧义，保持术语、人物、情绪连贯。跨块句子自然衔接。
+3. 俚语双关文化梗用中文等效表达；无等效则说清意图，不硬译。不添加原文没有的信息。
+
+专有名词处理：
+1. 人名、地名、机构、品牌、软件、术语缩写、作品标题等：默认保留原文拼写与大小写，不确定时保留原文。
+2. 若有通行中文名，可用"中文名（原文）"或"原文（中文名）"，首次括注后保持一致。
+3. 作品标题可用《》标示，标题文本按上述规则处理。
+
+仅返回JSON数组格式的翻译结果，不要任何解释：${inputArray}`;
         s.body = JSON.stringify({
           contents: [{
             parts: [{
@@ -7290,7 +7302,7 @@ console.log("Date: 2025/11/23 15:45:04");
           g = 20;
           break;
         case "ZhanlanAI":
-          g = 50;
+          g = 100;
       }
       let c = [];
       switch (t) {
