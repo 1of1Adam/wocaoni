@@ -4109,10 +4109,21 @@ console.log("Date: 2025/11/23 15:45:04");
         };
         const inputArray = JSON.stringify(e);
         const prompt = `将以下文本改写成${a}。
-改写原则：
-1. 语义精确但表达自然，像人说的话。
-2. 结合上下文消歧义，保持术语、人物、情绪连贯。
-3. 俚语双关文化梗用中文等效表达。
+改写原则（优先级递减）：
+
+1. **专业语境锚定与术语精确性 (Critical)**：
+   - **识别运动类型**：根据上下文判定是瑜伽 (Yoga)、力量 (Strength)、高强度间歇 (HIIT) 还是冥想 (Meditation)，等不同类型的运动，使用该运动领域专用的中文术语。
+     - *瑜伽示例*：Tabletop -> "四脚板凳式" (非桌子)；Flow -> "流动/串联"；Ground down -> "扎根"；Bind -> "体式捆绑/扣手"。
+     - *力量/HIIT示例*：Hinge -> "髋部折叠/铰链" (非弯腰)；Drive -> "发力蹬地"；Engage core -> "核心收紧/激活"。
+   - **解剖学与发力点准确**：涉及肌肉控制（如 glutes, quads, lats）或关节动作（extension, flexion）时，必须使用符合运动解剖学的指导语（如“肩胛骨下沉”、“骨盆摆正”）。
+
+2. **Apple Fitness+ 专属语感 (Voice)**：
+   - 保持“专业但包容”的教练人设：用词需体现 Apple 的积极心理学导向。
+   - 专属词汇：Close your rings -> "合上圆环"；Modifications -> "调整动作/替代动作"。
+
+3. **口语化与指令清晰度 (Orality)**：
+   - 必须是“人说的话”：短句为主，配合呼吸节奏，避免书面语堆砌。
+   - 去除翻译腔：确保在运动喘息状态下，用户能瞬间听懂指令意图。
 仅返回JSON数组格式的翻译结果，不要任何解释：${inputArray}`;
         s.body = JSON.stringify({
           contents: [{
